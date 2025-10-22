@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Portfolio</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background: #000;
+            color: #fff;
+            min-height: 100%;
+            overflow-x: hidden;
+            padding-top: 3rem;
+        }
+
+            /* Liquid background */
+            body::before {
+                content: "";
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: radial-gradient(circle at 20% 30%, rgba(0,255,255,0.2), transparent 60%), radial-gradient(circle at 80% 70%, rgba(255,0,255,0.2), transparent 60%), radial-gradient(circle at 50% 50%, rgba(0,128,255,0.25), transparent 70%);
+                animation: moveBackground 15s infinite alternate ease-in-out;
+                z-index: -2;
+            }
+
+        #app {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        @keyframes moveBackground {
+            0% {
+                transform: translate(0,0) scale(1);
+            }
+
+            100% {
+                transform: translate(-50px, -50px) scale(1.2);
+            }
+        }
+
+        .page {
+            display: none;
+            position: absolute;
+            width: 100%;
+            height: 105%;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            transition: all 0.6s ease;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+            .page.active {
+                opacity: 1;
+                pointer-events: auto;
+                visibility: visible;
+                display: block;
+                padding-bottom: calc(4rem + env(safe-area-inset-bottom));
+            }
+
+        .crystal-container {
+            width: 90%;
+            max-width: 90%;
+            margin: 2rem auto;
+            padding: 1.5rem;
+            border-radius: 2rem;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(30px) saturate(170%);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 0 60px rgba(0, 255, 255, 0.25), inset 0 0 30px rgba(255,255,255,0.05);
+            position: relative;
+            overflow: hidden;
+            margin-top: 8em;
+            border-radius: 20px;
+        }
+
+        h1, header {
+            text-align: center;
+            margin-bottom: 2rem;
+            font-size: 2rem;
+            background: linear-gradient(90deg, #0ff, #09f, #f0f);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradientShift 8s infinite alternate;
+        }
+
+        @keyframes gradientShift {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            100% {
+                background-position: 100% 50%;
+            }
+        }
+
+        .brand-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr); /* Mobile: 2 logos per row */
+            gap: 1rem;
+            justify-items: center;
+        }
+
+        @media (min-width: 1024px) {
+            .brand-grid {
+                grid-template-columns: repeat(5, 1fr); /* Desktop: 5 logos per row */
+            }
+        }
+
+        .brand-logo {
+            width: 120px;
+            height: 120px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 1rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+            cursor: pointer;
+        }
+
+        @media (min-width: 768px) {
+            .brand-logo {
+                width: 170px;
+                height: 170px;
+            }
+        }
+
+        .brand-logo:hover {
+            transform: scale(1.12);
+            background: rgba(255, 255, 255, 0.12);
+            box-shadow: 0 0 25px rgba(0, 255, 255, 0.6), 0 0 40px rgba(255, 0, 255, 0.4);
+        }
+
+        .brand-logo img {
+            max-width: 85%;
+            max-height: 85%;
+            object-fit: contain;
+            filter: drop-shadow(0 0 8px rgba(255,255,255,0.6));
+        }
+
+        .grid {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        @media (min-width: 768px) {
+            .grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+        }
+
+        @media (max-width: 768px) {
+            .card {
+                padding: 0.2rem;
+            }
+        }
+
+
+        .card:hover {
+            transform: scale(1.08);
+            background: rgba(255, 255, 255, 0.12);
+            box-shadow: 0 0 25px rgba(0, 255, 255, 0.6), 0 0 40px rgba(255, 0, 255, 0.4);
+        }
+
+        .card img {
+            max-width: 65%;
+            margin-bottom: 1rem;
+            filter: drop-shadow(0 0 8px rgba(255,255,255,0.6));
+            border-radius: 12px;
+        }
+
+        .card h3 {
+            margin: 0;
+            font-size: 1.2rem;
+            color: #fff;
+        }
+
+        /* NEW STYLES FOR DETAIL PAGES */
+        .experience-details {
+            text-align: left;
+            line-height: 1.6;
+            font-size: 1rem;
+            padding: 0 1rem;
+        }
+        .experience-details h2 {
+            color: #0ff;
+            border-bottom: 1px solid rgba(0, 255, 255, 0.3);
+            padding-bottom: 0.5rem;
+            margin-top: 2rem;
+        }
+        .experience-details ul {
+            list-style-type: disc;
+            padding-left: 2rem;
+        }
+        .experience-details p {
+            font-size: 1.1rem;
+        }
+
+
+        /* Progress Bar */
+        .progress-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 90%;
+            display: flex;
+            align-items: center;
+            background: rgba(0,0,0,0.6);
+            padding: 0.5rem 1rem;
+            z-index: 1000;
+            justify-self: anchor-center;
+        }
+
+        #progress-bar {
+            flex: 1;
+            height: 6px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-right: 1rem;
+            position: relative;
+        }
+
+            #progress-bar::after {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                bottom: 0;
+                width: var(--progress, 0%);
+                background: linear-gradient(90deg, #0ff, #0f0);
+                transition: width 0.4s ease;
+            }
+
+        #reset-btn {
+            display: block; /* full line, so we can center it */
+            margin: 2rem auto 1rem auto; /* center horizontally, add space above */
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(0, 255, 255, 0.6);
+            color: #0ff;
+            font-size: 1rem;
+            padding: 0.6rem 2rem;
+            border-radius: 1rem;
+            cursor: pointer;
+            backdrop-filter: blur(20px) saturate(180%);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.25), inset 0 0 10px rgba(255, 255, 255, 0.08);
+            transition: all 0.25s ease;
+        }
+
+            #reset-btn:hover {
+                background: rgba(0, 255, 255, 0.2);
+                color: #fff;
+                box-shadow: 0 0 25px rgba(0, 255, 255, 0.8), 0 0 40px rgba(255, 0, 255, 0.4);
+                transform: scale(1.05);
+            }
+
+        /* Back Button Styling */
+        .back-btn {
+            display: block; /* full line, so we can center it */
+            margin: 2rem auto 1rem auto; /* center horizontally, add space above */
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(0, 255, 255, 0.6);
+            color: #0ff;
+            font-size: 1rem;
+            padding: 0.6rem 2rem;
+            border-radius: 1rem;
+            cursor: pointer;
+            text-align: center;
+            backdrop-filter: blur(20px) saturate(180%);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.25), inset 0 0 10px rgba(255, 255, 255, 0.08);
+            transition: all 0.25s ease;
+        }
+
+            .back-btn:hover {
+                background: rgba(0, 255, 255, 0.2);
+                color: #fff;
+                box-shadow: 0 0 25px rgba(0, 255, 255, 0.8), 0 0 40px rgba(255, 0, 255, 0.4);
+                transform: scale(1.05);
+            }
+
+            .back-btn:active {
+                transform: scale(0.97);
+            }
+
+        @media (max-width: 768px) {
+            .responsive-img {
+                max-width: 100% !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-container">
+        <div id="progress-bar"></div>
+        <button id="reset-btn">Reset</button>
+    </div>
+
+    <div id="app">
+        <section class="page active" id="page-home">
+            <div class="crystal-container">
+                <header id="brand-header">My Experiences</header>
+                <div class="grid">
+                    <div class="card" data-experience="amasso1">
+                        <img src="https://cdn.shopify.com/s/files/1/0973/8974/0362/files/1_1.webp?v=1761029783" alt="Amasso Wheels" fetchpriority="high">
+                        <h3>Amasso Wheels</h3>
+                        <p>2012-2013</p>
+                    </div>
+                    <div class="card" data-experience="Boss2">
+                        <img src="https://cdn.shopify.com/s/files/1/0973/8974/0362/files/2_1.webp?v=1761029783" alt="B.Boss Wheels" fetchpriority="high">
+                        <h3>B.Boss Wheels</h3>
+                        <p>2013-2014</p>
+                    </div>
+                    <div class="card" data-experience="deloitte3">
+                        <img src="https://cdn.shopify.com/s/files/1/0973/8974/0362/files/3.webp?v=1761029782" alt="Deloitte" fetchpriority="high">
+                        <h3>Deloitte</h3>
+                        <p>2016</p>
+                    </div>
+                    <div class="card" data-experience="3W4">
+                        <img src="https://cdn.shopify.com/s/files/1/0973/8974/0362/files/4.webp?v=1761029782" alt="3W Systems" fetchpriority="high">
+                        <h3>3W Systems Pvt. Ltd.</h3>
+                        <p>2016-2017</p>
+                    </div>
+                    <div class="card" data-experience="DTG5">
+                        <img src="https://cdn.shopify.com/s/files/1/0973/8974/0362/files/5.webp?v=1761029783" alt="Dream Trading Group" fetchpriority="high">
+                        <h3>Dream Trading Group Ltd</h3>
+                        <p>2017-2020</p>
+                    </div>
+                    <div class="card" data-experience="WE6">
+                        <img src="https://cdn.shopify.com/s/files/1/0973/8974/0362/files/6.webp?v=1761029783" alt="Waylane Enterprises" fetchpriority="high">
+                        <h3>Waylane Enterprises</h3>
+                        <p>2020-2021</p>
+                    </div>
+                    <div class="card" data-experience="WL7">
+                        <img src="https://cdn.shopify.com/s/files/1/0973/8974/0362/files/7.webp?v=1761029783" alt="Way Lane Limited" fetchpriority="high">
+                        <h3>Way Lane Limited</h3>
+                        <p>2021-2024</p>
+                    </div>
+                    <div class="card" data-experience="CTG8">
+                        <img src="https://cdn.shopify.com/s/files/1/0973/8974/0362/files/8.webp?v=1761029782" alt="Cord Trading Group" fetchpriority="high">
+                        <h3>Cord Trading Group Pvt LTD.</h3>
+                        <p>2025-Present</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="page" id="page-amasso1">
+            <div class="crystal-container">
+                <header>Amasso Wheels (2012-2013)</header>
+                <div class="experience-details">
+                    <h2>Role: Social Media Manager</h2>
+                    <p>
+                        Between 2012 and 2013, I led a successful social media growth campaign for Amasso Wheels, an Australia-based company specializing in premium car wheels and rims. During this period, I grew their Facebook following from 10,000 to over 100,000 fans in just four months, entirely through organic strategies without any paid advertising. The campaign focused on creating engaging, visually appealing automotive content and building relationships within the car enthusiast community. <br />
+<br />                        <img src="https://cdn.shopify.com/s/files/1/0973/8974/0362/files/Amasso_Wheels.png?v=1761032324" alt="Cord Trading Group" class="responsive-img" style="max-width: 70%; height: auto; display: block; margin: 0 auto;">
+                        <br />I also collaborated with several automotive influencer brands to expand reach and credibility. Most importantly, the campaign effectively targeted and attracted an Australia-specific audience, helping Amasso strengthen its brand presence and become a recognized name in the local automotive market.
+                    </p>
+                    <ul>
+                        <li>Key Achievement 1: 1000% Follower Growth</li>
+                        <li>Key Achievement 2: Key Targets achieved in 4 Months</li>
+                        <li>Technologies Used: Hootsuite - Social Blade</li>
+                    </ul>
+
+
+                </div>
+                <button class="back-btn" data-back>Back</button>
+            </div>
+        </section>
+
+        <section class="page" id="page-Boss2">
+            <div class="crystal-container">
+                <header>B.Boss Wheels (2013-2014)</header>
+                <div class="experience-details">
+                    <h2>Role: Social Media Manager</h2>
+                    <p>
+                        Between 2013 and 2014, I led another successful social media growth campaign for B.Boss Wheels, an Australia-based company specializing in premium car wheels and rims. During this period, I grew their Facebook following from 10,000 to over 120,000 fans in just five months, entirely through organic strategies without any paid advertising. The campaign focused on creating engaging, visually appealing automotive content and building relationships within the car enthusiast community. <br />
+                        <br />                        <img src="https://cdn.shopify.com/s/files/1/0973/8974/0362/files/B.Boss_Wheels.png?v=1761032324" alt="Cord Trading Group" class="responsive-img" style="max-width: 70%; height: auto; display: block; margin: 0 auto;">
+                        <br />I also collaborated with several automotive influencer brands to expand reach and credibility. Most importantly, the campaign effectively targeted and attracted an Australia-specific audience, helping Amasso strengthen its brand presence and become a recognized name in the local automotive market.
+                    </p>
+                    <ul>
+                        <li>Key Achievement 1: 1200% Follower Growth</li>
+                        <li>Key Achievement 2: Key Targets achieved in 5 Months</li>
+                        <li>Technologies Used: Hootsuite - Social Blade</li>
+                    </ul>
+                </div>
+                <button class="back-btn" data-back>Back</button>
+            </div>
+        </section>
+
+        <section class="page" id="page-deloitte3">
+            <div class="crystal-container">
+                <header>Deloitte (2016)</header>
+                <div class="experience-details">
+                    <h2>Role: Auditor (Internship)</h2>
+                    <p>During my internship at <strong>Deloitte</strong> in 2016, I was part of the audit team responsible for conducting a province-wide audit of <strong>Utility Stores</strong> under the Punjab Government. The project provided extensive exposure to large-scale financial operations, compliance frameworks, and performance assessment across multiple districts.</p>
+
+                    <ul>
+                        <li>Successfully completed the full audit of Utility Stores across Punjab within one quarter — ahead of schedule.</li>
+                        <li>Collaborated with cross-functional teams to analyze financial data, assess operational efficiency, and ensure regulatory compliance.</li>
+                        <li>Developed a strong foundation in analytical review, documentation accuracy, and data-driven evaluation — skills that continue to support my strategic marketing and business decision-making.</li>
+                    </ul>
+
+                    <p><strong>Technologies Used:</strong></p>
+                    <ul class="tools-list">
+                        <li>Microsoft Excel - financial data analysis and audit tracking</li>
+                        <li>Microsoft Word - documentation and audit reports</li>
+                        <li>Microsoft PowerPoint - presentation of findings</li>
+                        <li>Zoho Mail - team communication and coordination</li>
+                        <li>Google Workspace - collaborative file sharing and record keeping</li>
+                    </ul>
+                    <br />                        <img src="https://cdn.shopify.com/s/files/1/0973/8974/0362/files/utility-stores1-1.jpg?v=1761033571" alt="Cord Trading Group" class="responsive-img" style="max-width: 70%; height: auto; display: block; margin: 0 auto;">
+                </div>
+                <button class="back-btn" data-back>Back</button>
+            </div>
+        </section>
+
+        <section class="page" id="page-3W4">
+            <div class="crystal-container">
+                <header>3W Systems Pvt. Ltd. (2016-2017)</header>
+                <div class="experience-details">
+                    <h2>Role: Product Manager</h2>
+                    <p>At <strong>3W Systems</strong>, I managed marketing and product initiatives for the company’s line of automotive accessories, including keychains and key covers. The role combined market research, strategic positioning, and campaign testing to strengthen brand visibility and drive customer engagement.</p>
+
+                    <ul>
+                        <li>Conducted detailed <strong>market research</strong> to identify customer needs, industry trends, and competitive opportunities within the auto accessories segment.</li>
+                        <li>Led <strong>market testing</strong> programs to evaluate product-market fit, refine pricing strategies, and optimize go-to-market plans.</li>
+                        <li>Designed and executed <strong>social media trials</strong> to test audience response, improve digital reach, and support future product launches.</li>
+                    </ul>
+                    <p><strong>Technologies Used:</strong></p>
+                    <ul class="tools-list">
+                        <li>Hootsuite — social media management and campaign scheduling</li>
+                        <li>Zoho CRM — lead tracking and customer management</li>
+                        <li>Google Analytics — performance tracking and audience insights</li>
+                        <li>Canva — marketing visuals and design assets</li>
+                        <li>Microsoft Excel — data tracking and performance analysis</li>
+                        <li>Outlook — business communications</li>
+                    </ul>
+                </div>
+                <button class="back-btn" data-back>Back</button>
+            </div>
+        </section>
+
+        <section class="page" id="page-DTG5">
+            <div class="crystal-container">
+                <header>Dream Trading Group Ltd (2017-2020)</header>
+                <div class="experience-details">
+                    <h2>Role: Director</h2>
+                    <p>As <strong>Director at Dream Trading Group Ltd. (DBA DreamCarz1)</strong>, I led the end-to-end launch, marketing, and scaling of a premium automotive accessories brand specializing in custom leather floor liners and trunk liners. As one of the first brands to operate at this scale, we achieved rapid market adoption and established a strong presence in the automotive aftermarket industry.</p>
+
+                    <ul>
+                        <li>Directed overall business strategy, digital marketing, and operations — generating over <strong>$3 million in revenue within 2.5 years</strong>.</li>
+                        <li>Managed a <strong>$500K marketing budget</strong> encompassing product photography, video production, and large-scale awareness campaigns.</li>
+                        <li>Organized and hosted multiple <strong>brand awareness events</strong>, building community trust and accumulating over <strong>800 five-star reviews</strong> across platforms.</li>
+                        <li>Optimized ad performance and analytics, achieving a peak of <strong>$8K daily revenue</strong> from an ad spend of <strong>$1.2K</strong> — maintaining high ROI and steady growth.</li>
+                        <li>Oversaw eCommerce operations through <strong>Shopify</strong> and <strong>WooCommerce</strong>, integrating marketing automation and CRM tools to streamline performance and customer engagement.</li>
+                    </ul>
+
+                    <p>Throughout this venture, I utilized a diverse suite of tools including <strong>Zoho CRM</strong>, <strong>Zoho Mail</strong>, <strong>Hootsuite</strong>, <strong>Lucky Orange</strong>, <strong>RingCentral</strong>, <strong>Smartlook</strong>, <strong>Zapier</strong>, <strong>Adobe Premiere Pro</strong>, <strong>Adobe Photoshop</strong>, <strong>Canva</strong>, <strong>Mailchimp</strong>, <strong>Slack</strong>, <strong>Google Workspace</strong>, <strong>Microsoft Office Suite</strong> (Word, Excel, PowerPoint, Outlook), <strong>cPanel</strong>, <strong>Google Tag Manager</strong>, <strong>Google Analytics</strong>, <strong>Facebook Pixel</strong>, <strong>Facebook Dataset</strong>, and <strong>AWS</strong>.</p>
+
+                    <p>This experience strengthened my ability to build brands from the ground up — combining creative marketing strategy, data-driven decision-making, and operational leadership to achieve scalable and sustainable business growth.</p>
+
+                    <p><strong>Technologies Used:</strong></p>
+                    <ul class="tools-list">
+                        <li>Shopify & WooCommerce — eCommerce management and sales tracking</li>
+                        <li>Zoho CRM & Zoho Mail — customer relationship management and communication</li>
+                        <li>Facebook Pixel, Google Tag Manager, Google Analytics — campaign optimization and conversion tracking</li>
+                        <li>Mailchimp — email marketing and customer retention campaigns</li>
+                        <li>Adobe Photoshop & Adobe Premiere Pro — product photography and video production</li>
+                        <li>Hootsuite — social media management</li>
+                        <li>Lucky Orange & Smartlook — website behavior analytics</li>
+                        <li>Zapier — automation of sales and CRM workflows</li>
+                        <li>Slack & RingCentral — team communication and coordination</li>
+                        <li>Microsoft Excel & PowerPoint — performance reporting and business analysis</li>
+                    </ul>
+
+                    <br />                        <img src="https://cdn.shopify.com/s/files/1/0973/8974/0362/files/DreamCarz1.png?v=1761035154" alt="Cord Trading Group" class="responsive-img" style="max-width: 70%; height: auto; display: block; margin: 0 auto;">
+                    <br /><br />   <div class="grid">
+                        <div class="card" data-experience="amasso1">
+                            <img src="https://cdn.shopify.com/s/files/1/0973/8974/0362/files/Slider_Images_-_Mobile_Version_-_Product_Description_2.webp?v=1761035935" alt="Amasso Wheels">
+                        </div>
+                        <div class="card" data-experience="amasso1">
+                            <img src="https://cdn.shopify.com/s/files/1/0973/8974/0362/files/Slider_Images_-_Mobile_Version_-_Product_Description_13.webp?v=1761035934" alt="Amasso Wheels">
+                        </div>
+                        <div class="card" data-experience="amasso1">
+                            <img src="https://cdn.shopify.com/s/files/1/0973/8974/0362/files/Slider_Images_-_Mobile_Version_-_Product_Description_5.webp?v=1761035933" alt="Amasso Wheels">
+                        </div>
+                    </div>
+                </div>
+                    <button class="back-btn" data-back>Back</button>
+                </div>
+        </section>
+
+        <section class="page" id="page-WE6">
+            <div class="crystal-container">
+                <header>Waylane Enterprises (2020-2021)</header>
+                <div class="experience-details">
+                    <h2>Role: Managing Director</h2>
+                    <p>In 2020, I established <strong>Waylane Enterprises</strong> in response to global supply chain disruptions caused by COVID-19, which had halted all shipping routes from China. To maintain business continuity and fulfill existing customer orders, I set up a complete in-house production facility in Pakistan focused on manufacturing custom <strong>Floor Liners</strong> and <strong>Trunk Liners</strong> from scratch — the first of its kind in the country.</p>
+
+                    <ul>
+                        <li>Founded and scaled the production unit from a team of <strong>3 to over 80 full-time employees</strong> within just seven months.</li>
+                        <li>Oversaw <strong>end-to-end manufacturing operations</strong>, including product design, material sourcing, and production workflow management.</li>
+                        <li>Directed <strong>staff training programs</strong> to ensure quality standards, operational efficiency, and alignment with brand objectives.</li>
+                        <li>Successfully <strong>fulfilled all pre-booked customer orders</strong> despite international logistical challenges, ensuring brand reliability and customer trust.</li>
+                        <li>After completing all order dispatches, strategically closed the unit due to cost inefficiencies compared to China-based manufacturing, preserving financial sustainability.</li>
+                    </ul>
+
+                    <p>This venture demonstrated my ability to lead under pressure, adapt to global disruptions, and build fully functional production operations from the ground up — combining leadership, problem-solving, and operational excellence in a fast-paced environment.</p>
+                    <br />
+
+                    <p><strong>Technologies & Tools Used:</strong></p>
+                    <ul class="tools-list">
+                        <li>Zoho CRM — production tracking and customer order management</li>
+                        <li>Microsoft Excel — operational and cost analysis</li>
+                        <li>Slack — internal communication and coordination</li>
+                        <li>Google Workspace — documentation, reporting, and file management</li>
+                        <li>RingCentral — remote team communication</li>
+                        <li>Adobe Photoshop — product design and visual mockups</li>
+                    </ul>
+                    <br />
+                    <div class="grid">
+                        <div class="card" data-experience="amasso1">
+                            <img src="https://cdn.shopify.com/s/files/1/0973/8974/0362/files/Untitled_design_16.webp?v=1761037228" alt="Amasso Wheels">
+                        </div>
+                        <div class="card" data-experience="amasso1">
+                            <img src="https://cdn.shopify.com/s/files/1/0973/8974/0362/files/Untitled_design_17.webp?v=1761037227" alt="Amasso Wheels">
+                        </div>
+                        <div class="card" data-experience="amasso1">
+                            <img src="https://cdn.shopify.com/s/files/1/0973/8974/0362/files/Untitled_design_15.webp?v=1761037228" alt="Amasso Wheels">
+                        </div>
+                    </div>
+
+                </div>
+                <button class="back-btn" data-back>Back</button>
+            </div>
+        </section>
+
+        <section class="page" id="page-WL7">
+            <div class="crystal-container">
+                <header>Way Lane Limited (2021-2024)</header>
+                <div class="experience-details">
+                    <h2>Role: Sales & Digital Marketing Manager</h2>
+                    <p>From <strong>2021 to 2024</strong>, I served as <strong>Sales & Digital Marketing Manager</strong> at <strong>Way Lane Limited</strong>, a premium brand specializing in <strong>leather clothing and automotive accessories</strong>. My role centered on expanding the company’s international presence, driving digital growth, and positioning the brand strategically across European and Middle Eastern markets.</p>
+
+                    <ul>
+                        <li>Identified and secured new <strong>market opportunities</strong> across Europe and the Middle East through strategic partnerships, market research, and competitive analysis.</li>
+                        <li>Developed and executed <strong>digital marketing campaigns</strong> across social media, email, and eCommerce platforms, resulting in increased brand awareness and sales growth.</li>
+                        <li>Collaborated with creative and product teams to ensure consistent <strong>brand positioning</strong> and alignment of content with customer insights and regional preferences.</li>
+                        <li>Managed <strong>sales pipelines</strong> and client engagement through CRM systems, optimizing lead conversion and customer retention strategies.</li>
+                        <li>Analyzed campaign metrics and market performance to refine ad spend and maximize <strong>return on investment (ROI)</strong>.</li>
+                        <li>Conducted <strong>employee training programs</strong> focused on <strong>outbound telemarketing sales</strong>, enhancing team communication, product knowledge, and closing techniques.</li>
+                        <li>Coordinated cross-functional operations between marketing, logistics, and customer support teams to ensure seamless delivery and service excellence.</li>
+                    </ul>
+
+                    <p>This position enabled me to integrate sales leadership with digital strategy — strengthening the company’s international market reach while developing a skilled sales team capable of driving consistent and sustainable revenue growth.</p>
+                    <br />  <p><strong>Technologies & Tools Used:</strong></p>
+                    <ul class="tools-list">
+                        <li>Zoho CRM — sales tracking, pipeline management, and lead nurturing</li>
+                        <li>Hootsuite — social media management and scheduling</li>
+                        <li>Google Analytics & Facebook Pixel — campaign performance tracking and audience insights</li>
+                        <li>Canva & Adobe Photoshop — content design and ad creatives</li>
+                        <li>Mailchimp — email marketing and automation campaigns</li>
+                        <li>Slack & RingCentral — team communication and coordination</li>
+                        <li>Microsoft Excel & PowerPoint — sales reporting and performance analysis</li>
+                        <li>Google Tag Manager — event tracking and conversion optimization</li>
+                        <li>Google Workspace — documentation and data sharing</li>
+                    </ul>
+
+                </div>
+                <button class="back-btn" data-back>Back</button>
+            </div>
+        </section>
+
+        <section class="page" id="page-CTG8">
+            <div class="crystal-container">
+                <header>Cord Trading Group Pvt LTD. (2025-Present)</header>
+                <div class="experience-details">
+                    <h2>Role: Head of Digital Marketing and Sales</h2>
+                    <p>As <strong>Head of Digital Marketing and Sales</strong> at <strong>Cord Trading Group Pvt. Ltd. (DBA Cord Seats)</strong>, I led the strategic growth and digital transformation of a premium automotive brand specializing in <strong>genuine leather seat covers</strong>. My primary focus was on expanding market presence, elevating brand perception, and driving measurable sales performance through data-driven and AI-assisted marketing initiatives.</p>
+
+                    <ul>
+                        <li>Developed and implemented a comprehensive <strong>digital marketing strategy</strong> to increase brand awareness, audience engagement, and revenue across domestic and international markets.</li>
+                        <li>Directed <strong>sales operations</strong> and account management, building partnerships with distributors, automotive dealers, and online retail platforms.</li>
+                        <li>Supervised <strong>creative production</strong>, including product photography, video marketing, and brand storytelling to highlight premium craftsmanship.</li>
+                        <li>Integrated <strong>AI-driven marketing automation</strong> for audience segmentation, predictive analytics, and personalized ad targeting to optimize campaign performance.</li>
+                        <li>Utilized <strong>CRM and analytics platforms</strong> to monitor customer journeys, forecast sales, and streamline the lead-to-conversion process.</li>
+                        <li>Collaborated with <strong>product design and manufacturing teams</strong> to ensure marketing efforts aligned with evolving product lines and market expectations.</li>
+                    </ul>
+
+                    <p><strong>Technologies & Tools Used:</strong></p>
+                    <ul class="tools-list">
+                        <li>Zoho CRM — customer management and sales tracking</li>
+                        <li>Hootsuite — social media scheduling and engagement analytics</li>
+                        <li>Shopify — eCommerce management and performance optimization</li>
+                        <li>Canva — visual content creation for marketing campaigns</li>
+                        <li>Adobe Photoshop & Adobe Premiere Pro — creative design and media production</li>
+                        <li>Mailchimp — campaign automation and lead nurturing</li>
+                        <li>Slack — interdepartmental communication and project coordination</li>
+                        <li>Google Analytics & Google Tag Manager — website tracking and marketing attribution</li>
+                        <li>Facebook Pixel — ad performance monitoring and audience segmentation</li>
+                        <li>Zapier — workflow automation between business systems</li>
+                        <li>AWS — infrastructure support and data management</li>
+                        <li>AI-based platforms — content generation, campaign optimization, and predictive marketing insights</li>
+                    </ul>
+                    <br />
+                    <p>This role strengthened my ability to integrate <strong>AI, marketing strategy, and sales leadership</strong> — combining creative innovation with data intelligence to build a scalable, results-oriented automotive brand.</p>
+
+
+                </div>
+                <button class="back-btn" data-back>Back</button>
+            </div>
+        </section>
+
+    </div>
+
+
+    <script>
+        // --------------------------------------------------------------------
+        // REWRITTEN JAVASCRIPT FOR PORTFOLIO NAVIGATION
+        // --------------------------------------------------------------------
+
+        let currentPage = 0;
+        const pages = document.querySelectorAll('.page');
+        let currentExperience = null; // Simplified tracking
+
+        const progressBar = document.getElementById('progress-bar');
+        const resetBtn = document.getElementById('reset-btn');
+        const backBtns = document.querySelectorAll('[data-back]');
+
+        let historyStack = []; // Internal history for wizard logic
+
+        // -------------------- Navigation Helpers --------------------
+        function updateProgress() {
+            let step = 0;
+            // Page 0 is the home page (Step 1 of 2)
+            if (currentPage === 0) step = 1; 
+            // Any other page is a detail page (Step 2 of 2)
+            else if (currentPage > 0) step = 2; 
+
+            const totalSteps = 2; // Only 2 steps: Home -> Detail
+            const progress = (step / totalSteps) * 100;
+            progressBar.style.setProperty('--progress', progress + '%');
+        }
+
+        // -------------------- Unified goToPage (wizard + browser history) --------------------
+        function goToPage(index, addToHistory = true) {
+            // Prevent invalid indexes
+            if (index < 0 || index >= pages.length) return;
+
+            // Track wizard history (internal stack)
+            if (addToHistory && index !== currentPage) {
+                historyStack.push(currentPage);
+            }
+
+            // Push into browser history so Back/Forward works across navigation
+            if (addToHistory && index !== currentPage) {
+                // Simplified state, we only need the page index
+                history.pushState({ page: index }, "", `?step=${index}`);
+            }
+
+            // Update wizard UI
+            pages.forEach((p, i) => p.classList.toggle('active', i === index));
+            currentPage = index;
+            updateProgress();
+        }
+
+        function goToPageById(id, addToHistory = true) {
+            const index = Array.from(pages).findIndex(p => p.id === id);
+            if (index !== -1) goToPage(index, addToHistory);
+        }
+
+        // -------------------- Reset --------------------
+        resetBtn.addEventListener('click', () => {
+            currentExperience = null;
+            historyStack = [];
+            goToPage(0, true); // Go to home, add to history
+        });
+
+        // -------------------- Back Buttons (use browser back) --------------------
+        backBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                window.history.back(); // Simplest way to go back
+            });
+        });
+
+        // -------------------- Page 1 (Home) → Detail Page --------------------
+        document.querySelectorAll('#page-home .card').forEach(el => {
+            el.addEventListener('click', () => {
+                currentExperience = el.dataset.experience;
+                const targetPageId = 'page-' + currentExperience;
+                goToPageById(targetPageId, true); // Go to detail page, add to history
+            });
+        });
+
+        // -------------------- History / Navigation handlers --------------------
+
+        // Handle Back/Forward browser navigation (restores step)
+        window.addEventListener("popstate", (event) => {
+            if (event.state && typeof event.state.page === "number") {
+                goToPage(event.state.page, false); // Go to page, but don't re-add to history
+            } else {
+                // No state (e.g., first entry) → read URL or fallback
+                const params = new URLSearchParams(window.location.search);
+                const stepParam = parseInt(params.get("step"), 10);
+                if (!isNaN(stepParam) && stepParam >= 0 && stepParam < pages.length) {
+                    goToPage(stepParam, false);
+                } else {
+                    goToPage(0, false);
+                }
+            }
+        });
+
+        // Handle BFCache restore
+        window.addEventListener("pageshow", (event) => {
+            // If restored from bfcache or via back/forward, ensure UI matches URL/state
+            if (event.persisted || (performance.getEntriesByType("navigation")[0] && performance.getEntriesByType("navigation")[0].type === "back_forward")) {
+                if (history.state && typeof history.state.page === "number") {
+                    goToPage(history.state.page, false);
+                } else {
+                    const params = new URLSearchParams(window.location.search);
+                    const stepParam = parseInt(params.get("step"), 10);
+                    if (!isNaN(stepParam) && stepParam >= 0 && stepParam < pages.length) {
+                        goToPage(stepParam, false);
+                    } else {
+                        goToPage(0, false);
+                    }
+                }
+            }
+        });
+
+        // -------------------- Start (single init) --------------------
+        document.addEventListener("DOMContentLoaded", () => {
+            const params = new URLSearchParams(window.location.search);
+            const stepParam = parseInt(params.get("step"), 10);
+
+            let initialPage = 0;
+            if (!isNaN(stepParam) && stepParam >= 0 && stepParam < pages.length) {
+                initialPage = stepParam;
+            }
+
+            goToPage(initialPage, false); // Load correct page on start
+
+            // Seed initial history state
+            history.replaceState({ page: currentPage }, "", `?step=${currentPage}`);
+        });
+
+    </script>
+
+</body>
+</html>
